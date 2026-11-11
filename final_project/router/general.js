@@ -1,43 +1,24 @@
 const express = require('express');
-let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
-let users = require("./auth_users.js").users;
-const public_users = express.Router();
-
-
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+const axios = require('axios');
+const books = require('./booksdb');
+const {register} = require('./auth_users');
+const router = express.Router();
+router.post('/register', register);
+router.get('/catalog/books', (req,res)=>res.json(books));
+router.get('/catalog/isbn/:isbn', (req,res)=> books[req.params.isbn] ? res.json(books[req.params.isbn]) : res.status(404).json({message:'Book not found'}));
+for (const field of ['author','title']) router.get(`/catalog/${field}/:value`, (req,res)=>{
+ const matches=Object.fromEntries(Object.entries(books).filter(([,b])=>b[field].toLowerCase()===req.params.value.toLowerCase()));
+ return Object.keys(matches).length ? res.json(matches) : res.status(404).json({message:'Book not found'});
 });
-
-// Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+const client=req=>axios.create({baseURL:`http://127.0.0.1:${req.socket.localPort}/catalog`,timeout:5000,proxy:false});
+const fail=(res,e)=>res.status(e.response?.status||502).json(e.response?.data||{message:'Catalogue request failed'});
+// Retrieve all books using async/await and Axios.
+router.get('/',async(req,res)=>{try{res.json((await client(req).get('/books')).data);}catch(e){fail(res,e);}});
+// Retrieve a book by ISBN using Axios promise callbacks.
+router.get('/isbn/:isbn',(req,res)=>client(req).get(`/isbn/${encodeURIComponent(req.params.isbn)}`).then(r=>res.json(r.data)).catch(e=>fail(res,e)));
+// Retrieve books by author and title using async/await and Axios.
+for(const field of ['author','title']) router.get(`/${field}/:value`,async(req,res)=>{
+ try{res.json((await client(req).get(`/${field}/${encodeURIComponent(req.params.value)}`)).data);}catch(e){fail(res,e);}
 });
-
-// Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
- });
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
-
-// Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
-
-//  Get book review
-public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
-
-module.exports.general = public_users;
+router.get('/review/:isbn',(req,res)=>books[req.params.isbn]?res.json(books[req.params.isbn].reviews):res.status(404).json({message:'Book not found'}));
+module.exports.general=router;

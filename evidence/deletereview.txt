@@ -1,0 +1,5 @@
+curl "-X" "DELETE" "-b" "cookies.txt" "http://127.0.0.1:5000/customer/auth/review/1"
+
+{"message":"Review successfully deleted","reviews":{}}
+HTTP_STATUS: 200
+

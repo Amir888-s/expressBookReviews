@@ -1,0 +1,5 @@
+curl "-X" "POST" "-H" "Content-Type: application/json" "-d" "{\"username\":\"assignment_demo\",\"password\":\"DemoOnly123!\"}" "http://127.0.0.1:5000/register"
+
+{"message":"User successfully registered. Now you can login"}
+HTTP_STATUS: 201
+

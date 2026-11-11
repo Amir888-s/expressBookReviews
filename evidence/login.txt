@@ -1,0 +1,5 @@
+curl "-X" "POST" "-H" "Content-Type: application/json" "-c" "cookies.txt" "-d" "{\"username\":\"assignment_demo\",\"password\":\"DemoOnly123!\"}" "http://127.0.0.1:5000/customer/login"
+
+{"message":"User successfully logged in"}
+HTTP_STATUS: 200
+
