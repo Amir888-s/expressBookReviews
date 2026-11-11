@@ -16,7 +16,7 @@ Server: http://127.0.0.1:5000. Run `npm test` for integration checks.
 
 ## Submission
 
-Evidence files in `evidence/` contain executed cURL commands and actual responses for tasks 2-10. `reviewadded.txt` demonstrates both creation and modification. Cookie files and real credentials are excluded; the displayed credentials are disposable demo values.
+Evidence files in `evidence/` contain executed cURL commands and actual responses for tasks 1-10. `reviewadded.txt` demonstrates both creation and modification. Cookie files and real credentials are excluded; the displayed credentials are disposable demo values.
 
 Task 1: https://github.com/Amir888-s/expressBookReviews
 
@@ -38,4 +38,5 @@ Usernames are unique. Passwords are salted and hashed. Login uses an expiring JW
 
 This course demo stores users, sessions and reviews in memory; restarting resets them. Production use would require persistent storage, a shared session store, HTTPS, configured JWT_SECRET/SESSION_SECRET, and rate limiting. The original book dataset is preserved.
 
-Task 1 evidence notes a local Windows cURL TLS failure and includes a separately verified Node HTTPS GitHub response; it does not mislabel that response as cURL output.
+Task 1 uses the official curl Windows build with a CA bundle exported from the system and Node trusted certificates, since the Windows system curl backend failed. Certificate verification remained enabled.
+
